@@ -27,6 +27,19 @@ jobs:
           node-version: "20"
           cache: "npm"
 
+      - name: Show Node and npm versions
+        run: |
+          node -v
+          npm -v
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -49,6 +62,7 @@ jobs:
         env:
           BASE_PATH: ${{ env.BASE_PATH }}
           NODE_OPTIONS: --max_old_space_size=4096
+          NEXT_TELEMETRY_DISABLED: "1"
         run: npm run build
 
       - name: Upload artifact
