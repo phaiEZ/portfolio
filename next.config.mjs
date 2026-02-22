@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const basePath = process.env.BASE_PATH || "";
+
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -6,6 +8,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
+  output: "export",
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : undefined,
+};
 
-export default nextConfig
+export default nextConfig;
