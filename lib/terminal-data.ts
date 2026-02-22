@@ -3,10 +3,11 @@ export const TERMINAL_DATA = {
   role: "Full-Stack Software Engineer",
 
   about: [
-    "Full-Stack Software Engineer experienced in building",
-    "scalable CRM, POS, and healthcare systems in production",
-    "environments. Strong in frontend, backend, and database",
-    "architecture.",
+    "Full-Stack Software Engineer with experience building",
+    "scalable and production-ready web applications.",
+    "Skilled in designing and developing end-to-end systems",
+    "across frontend, backend, and database layers.",
+    "Focused on performance, maintainability, and clean architecture.",
   ],
 
   skills: {
