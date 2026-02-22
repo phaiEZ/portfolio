@@ -46,8 +46,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Rebuild lightningcss native bindings (Linux)
-        run: npm rebuild lightningcss || true
+      - name: Ensure Linux native deps
+        run: |
+          npm i --no-save @tailwindcss/oxide-linux-x64-gnu@^4.2.0 lightningcss-linux-x64-gnu@^1.31.1
+          npm rebuild @tailwindcss/oxide lightningcss || true
 
       - name: Compute BASE_PATH for Pages
         run: |
