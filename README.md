@@ -25,7 +25,21 @@ cp deploy/portfolio.caddy /opt/proxy/sites/
 cd /opt/proxy && docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 ```
 
-Update: `cd /opt/portfolio && git pull && docker compose up -d --build`.
+Update by hand: `cd /opt/portfolio && ./scripts/deploy.sh`.
+
+## Auto deploy
+
+Push to `main` → GitHub Actions SSHes into the VPS with a key that can only run `scripts/deploy.sh`
+(`command=` in `~/.ssh/authorized_keys`), which pulls and rebuilds. A failed build leaves the running site alone.
+Watch it in the repo's **Actions** tab; **Run workflow** there redeploys by hand.
+
+Repo settings → Secrets and variables → Actions:
+- secrets `VPS_SSH_KEY` (private half of the deploy key) and `VPS_KNOWN_HOSTS` (`ssh-keyscan <VPS IP>`)
+- variables `VPS_HOST` (VPS IP; the workflow is skipped while it's empty) and `VPS_USER` (server user)
+
+On the VPS the public half is in `~/.ssh/authorized_keys` as
+`command="/opt/portfolio/scripts/deploy.sh",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-ed25519 ...`.
+If `deploy/portfolio.caddy` changes, the deploy log says so: copy it to `/opt/proxy/sites/` and reload Caddy yourself.
 
 Backup: `docker run --rm -v portfolio_data:/data -v "$PWD":/out busybox tar czf /out/portfolio-data.tgz -C /data .`
 
