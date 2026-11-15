@@ -1,0 +1,23 @@
+# Portfolio (project folder /opt/portfolio). Copy to /opt/proxy/sites/, then: cd /opt/proxy && docker compose restart caddy
+phaiez.com {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	# admin uploads: up to 6 images x 10 MB
+	request_body {
+		max_size 70MB
+	}
+
+	# the app's login guard reads the last X-Forwarded-For entry: send exactly the visitor's address
+	reverse_proxy portfolio-app:3000 {
+		header_up X-Forwarded-For {client_ip}
+	}
+}
+
+www.phaiez.com {
+	redir https://phaiez.com{uri} permanent
+}

@@ -1,0 +1,28 @@
+# Portfolio on the shared VPS (project folder /opt/portfolio).
+# No host ports: the shared Caddy stack (/opt/proxy) reaches it as portfolio-app:3000 on the "web" network.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - data:/data
+    # unprivileged "node" user; only /data (works + uploads) and Next's caches are writable
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.next/cache
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    mem_limit: 512m
+    networks:
+      web:
+        aliases: [portfolio-app]
+
+networks:
+  web:
+    external: true
+
+volumes:
+  data:
+    name: portfolio_data

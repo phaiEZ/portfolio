@@ -1,16 +1,46 @@
 /** @type {import('next').NextConfig} */
-const basePath = process.env.BASE_PATH || "";
+
+// Runs as a Node server (Docker on the VPS) so the admin can add works; no longer a static export.
+const csp = [
+  "default-src 'self'",
+  // Next inlines its bootstrap scripts; dev mode also needs eval for fast refresh
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+].join("; ")
 
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  output: "standalone",
+  poweredByHeader: false,
   images: {
     unoptimized: true,
   },
-  output: "export",
-  basePath,
-  assetPrefix: basePath ? `${basePath}/` : undefined,
-};
+  experimental: {
+    serverActions: {
+      // up to 6 images × 10 MB in one form
+      bodySizeLimit: "65mb",
+    },
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: csp },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+    ]
+  },
+}
 
-export default nextConfig;
+export default nextConfig

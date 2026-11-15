@@ -1,6 +1,8 @@
 "use client"
 
 import { TERMINAL_DATA } from "@/lib/terminal-data"
+import { useProfile } from "./profile-context"
+import { bareHref } from "@/lib/profile-schema"
 
 interface OutputLine {
   type: "command" | "response" | "error"
@@ -88,14 +90,15 @@ function HelpResponse() {
 }
 
 function AboutResponse() {
+  const P = useProfile()
   return (
     <div className="space-y-2">
       <p className="text-foreground font-medium">
-        {TERMINAL_DATA.name}
+        {P.name}
       </p>
-      <p className="text-muted-foreground text-sm">{TERMINAL_DATA.role}</p>
+      <p className="text-muted-foreground text-sm">{P.role}</p>
       <div className="mt-3 space-y-0.5">
-        {TERMINAL_DATA.about.map((line, i) => (
+        {P.about.split("\n").filter(Boolean).map((line, i) => (
           <p key={i} className="text-foreground/80 leading-relaxed">
             {line}
           </p>
@@ -106,9 +109,10 @@ function AboutResponse() {
 }
 
 function SkillsResponse() {
+  const P = useProfile()
   return (
     <div className="space-y-2">
-      {Object.entries(TERMINAL_DATA.skills).map(([category, items]) => (
+      {P.skills.map(({ category, items }) => (
         <div key={category} className="flex gap-4">
           <span className="text-muted-foreground w-20 shrink-0 text-right">
             {category}
@@ -121,10 +125,11 @@ function SkillsResponse() {
 }
 
 function ExperienceResponse() {
+  const P = useProfile()
   return (
     <div className="space-y-4">
-      {TERMINAL_DATA.experience.map((exp) => (
-        <div key={exp.company}>
+      {P.experience.map((exp, i) => (
+        <div key={i}>
           <p className="text-foreground font-medium">
             {exp.company}
             <span className="text-muted-foreground font-normal">
@@ -146,10 +151,11 @@ function ExperienceResponse() {
 }
 
 function ProjectsResponse() {
+  const P = useProfile()
   return (
     <div className="space-y-2">
-      {TERMINAL_DATA.projects.map((p) => (
-        <div key={p.name} className="flex gap-4">
+      {P.projects.map((p, i) => (
+        <div key={i} className="flex gap-4">
           <span className="text-foreground w-28 shrink-0">{p.name}</span>
           <span className="text-muted-foreground">{p.desc}</span>
         </div>
@@ -159,37 +165,38 @@ function ProjectsResponse() {
 }
 
 function ContactResponse() {
+  const P = useProfile()
   return (
     <div className="space-y-1">
       <div className="flex gap-4">
         <span className="text-muted-foreground w-20 shrink-0 text-right">Email</span>
         <a
-          href={`mailto:${TERMINAL_DATA.contact.email}`}
+          href={`mailto:${P.contact.email}`}
           className="text-foreground underline underline-offset-4 decoration-border hover:decoration-foreground transition-colors"
         >
-          {TERMINAL_DATA.contact.email}
+          {P.contact.email}
         </a>
       </div>
       <div className="flex gap-4">
         <span className="text-muted-foreground w-20 shrink-0 text-right">LinkedIn</span>
         <a
-          href={`https://${TERMINAL_DATA.contact.linkedin}`}
+          href={bareHref(P.contact.linkedin)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-foreground underline underline-offset-4 decoration-border hover:decoration-foreground transition-colors"
         >
-          {TERMINAL_DATA.contact.linkedin}
+          {P.contact.linkedin}
         </a>
       </div>
       <div className="flex gap-4">
         <span className="text-muted-foreground w-20 shrink-0 text-right">GitHub</span>
         <a
-          href={`https://${TERMINAL_DATA.contact.github}`}
+          href={bareHref(P.contact.github)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-foreground underline underline-offset-4 decoration-border hover:decoration-foreground transition-colors"
         >
-          {TERMINAL_DATA.contact.github}
+          {P.contact.github}
         </a>
       </div>
     </div>

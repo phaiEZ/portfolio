@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import { TerminalOutput } from "./terminal-output"
+import { useProfile } from "./profile-context"
 import type { CommandName } from "@/lib/terminal-data"
 
 interface OutputLine {
@@ -23,6 +24,7 @@ const VALID_COMMANDS: CommandName[] = [
 ]
 
 export function Terminal() {
+  const profile = useProfile()
   const [input, setInput] = useState("")
   const [suggestion, setSuggestion] = useState("")
   const [output, setOutput] = useState<OutputLine[]>([])
@@ -160,10 +162,10 @@ export function Terminal() {
 
           <div className="space-y-1 pb-3 border-b border-border mb-3">
             <p className="text-foreground">
-              Chayut Phunphet
+              {profile.name}
             </p>
             <p className="text-muted-foreground text-xs">
-              Full-Stack Software Engineer
+              {profile.role}
             </p>
             <p className="text-muted-foreground text-xs mt-2">
               {"Type "}
